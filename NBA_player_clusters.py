@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 # Load Data
-data = pd.read_csv('/Users/orionmoreno/Streamlit Projects/NBA Similar Players Project/NBA_PLAYERS.csv')
+data = pd.read_csv('https://raw.githubusercontent.com/omoreno28/NBA-Player-Clusters/main/NBA_PLAYERS.csv')
 
 # Filter relevant numeric columns for clustering
 features = ['PTS', 'TRB', 'AST', 'FG%', 'FG3%', 'FT%', 'eFG%', 'PER', 'WS']
