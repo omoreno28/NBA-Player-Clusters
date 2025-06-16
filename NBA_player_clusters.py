@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 import numpy as np
 
 # Load Data
@@ -18,9 +20,15 @@ scaler = StandardScaler()
 data_scaled = scaler.fit_transform(data_numeric)
 
 # KMeans Clustering
-k = 10  # number of clusters (can be parameterized)
+k = 15  # number of clusters (can be parameterized)
 kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
 data['Cluster'] = kmeans.fit_predict(data_scaled)
+
+# Dimensionality Reduction with PCA for Visualization
+pca = PCA(n_components=2)
+reduced_data = pca.fit_transform(data_scaled)
+data['PCA1'] = reduced_data[:, 0]
+data['PCA2'] = reduced_data[:, 1]
 
 # Streamlit App
 st.title("NBA Player Similarity Finder using K-Means")
@@ -35,6 +43,22 @@ if player_name:
     # Show similar players in the same cluster
     similar_players = data[data['Cluster'] == player_cluster]
     st.dataframe(similar_players[['Name', 'PTS', 'TRB', 'AST', 'FG%', 'FG3%', 'FT%', 'eFG%', 'PER', 'WS']].sort_values(by='PTS', ascending=False))
+    # Visualize clusters in 2D using PCA
+    st.markdown("---")
+    st.subheader("Cluster Visualization (PCA-reduced)")
+
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(
+        data['PCA1'], data['PCA2'], 
+        c=data['Cluster'], cmap='tab10', alpha=0.6, edgecolor='k'
+    )
+    selected = data[data['Name'] == player_name]
+    ax.scatter(selected['PCA1'], selected['PCA2'], color='red', s=100, label=player_name, edgecolor='black')
+    ax.set_xlabel("PCA Component 1")
+    ax.set_ylabel("PCA Component 2")
+    ax.set_title("K-means Cluster Visualization (2D PCA)")
+    ax.legend()
+    st.pyplot(fig)
 
     # Optionally show cluster center stats
     st.markdown("---")
