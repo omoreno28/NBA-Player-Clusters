@@ -20,7 +20,7 @@ scaler = StandardScaler()
 data_scaled = scaler.fit_transform(data_numeric)
 
 # KMeans Clustering
-k = 15  # number of clusters (can be parameterized)
+k = 25  # number of clusters (can be parameterized)
 kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
 data['Cluster'] = kmeans.fit_predict(data_scaled)
 
